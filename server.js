@@ -6,11 +6,12 @@ const path = require("path");
 
 const app = express();
 
+// Railway provides PORT automatically
 const PORT = Number(process.env.PORT) || 3000;
 
-// ================================
-// Middleware
-// ================================
+// ============================================
+// MIDDLEWARE
+// ============================================
 
 app.use(express.json());
 
@@ -20,9 +21,9 @@ app.use(
     })
 );
 
-// ================================
-// MySQL
-// ================================
+// ============================================
+// MYSQL CONNECTION
+// ============================================
 
 const db = mysql.createPool({
     host: process.env.MYSQLHOST,
@@ -36,9 +37,9 @@ const db = mysql.createPool({
     queueLimit: 0
 });
 
-// ================================
-// Frontend
-// ================================
+// ============================================
+// SERVE FRONTEND
+// ============================================
 
 app.use(
     express.static(
@@ -46,44 +47,73 @@ app.use(
     )
 );
 
-// ================================
-// Test API
-// ================================
+// ============================================
+// TEST API
+// ============================================
 
 app.get("/api/test", (req, res) => {
+
     res.json({
         success: true,
         message: "Backend is working!"
     });
+
 });
 
-// ================================
-// Security-awareness demo
-// ================================
+// ============================================
+// SECURITY AWARENESS DEMO
+// ============================================
 
 app.post("/api/demo-submit", async (req, res) => {
 
     try {
 
-        const { username } = req.body;
+        // Only accept the username.
+        // Do NOT collect or store a real password.
+
+        const {
+            username
+        } = req.body;
+
+        // ----------------------------
+        // Validation
+        // ----------------------------
 
         if (!username) {
+
             return res.status(400).json({
                 success: false,
                 message: "Username is required."
             });
+
         }
 
-        // IMPORTANT:
-        // Never store the password entered by the visitor.
-        // This is a fixed dummy value used only for the demo.
+        // ----------------------------
+        // Fixed dummy password
+        // ----------------------------
+        // This is NOT the password entered
+        // by the visitor.
 
-        const DEMO_PASSWORD = "DEMO_ONLY_PASSWORD";
+        const DEMO_PASSWORD =
+            "DEMO_ONLY_PASSWORD";
+
+        // ----------------------------
+        // Insert into MySQL
+        // ----------------------------
 
         const [result] = await db.execute(
-            `INSERT INTO demo_submissions
-            (demo_username, demo_password)
-            VALUES (?, ?)`,
+            `
+            INSERT INTO demo_submissions
+            (
+                demo_username,
+                demo_password
+            )
+            VALUES
+            (
+                ?,
+                ?
+            )
+            `,
             [
                 username,
                 DEMO_PASSWORD
@@ -91,14 +121,24 @@ app.post("/api/demo-submit", async (req, res) => {
         );
 
         console.log(
-            "Security demo submission:",
+            "Demo submission received:",
             username
         );
 
+        // ----------------------------
+        // Response
+        // ----------------------------
+
         res.json({
+
             success: true,
-            message: "Demo submission recorded safely.",
-            id: result.insertId
+
+            message:
+                "Demo submission recorded safely.",
+
+            id:
+                result.insertId
+
         });
 
     } catch (error) {
@@ -109,19 +149,27 @@ app.post("/api/demo-submit", async (req, res) => {
         );
 
         res.status(500).json({
+
             success: false,
-            message: "Database error."
+
+            message:
+                "Database error."
+
         });
+
     }
+
 });
 
-// ================================
-// Start server
-// ================================
+// ============================================
+// START SERVER
+// ============================================
 
 async function startServer() {
 
     try {
+
+        // Test MySQL connection
 
         const connection =
             await db.getConnection();
@@ -131,6 +179,10 @@ async function startServer() {
         );
 
         connection.release();
+
+        // ----------------------------
+        // Start Express
+        // ----------------------------
 
         app.listen(
             PORT,
@@ -156,6 +208,7 @@ async function startServer() {
 
         process.exit(1);
     }
+
 }
 
 startServer();
