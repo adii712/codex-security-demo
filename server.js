@@ -6,7 +6,9 @@ const path = require("path");
 
 const app = express();
 
-const PORT = Number(process.env.PORT) || 3000;
+// Railway provides PORT automatically.
+// Local development will use 3000.
+const PORT = process.env.PORT || 3000;
 
 // =================================
 // MIDDLEWARE
@@ -26,7 +28,7 @@ app.use(
 
 const db = mysql.createPool({
     host: process.env.MYSQLHOST,
-    port: Number(process.env.MYSQLPORT) || 3306,
+    port: Number(process.env.MYSQLPORT || 3306),
     user: process.env.MYSQLUSER,
     password: process.env.MYSQLPASSWORD,
     database: process.env.MYSQLDATABASE,
@@ -51,14 +53,14 @@ app.use(
 // =================================
 
 app.get("/api/test", (req, res) => {
-    res.json({
+    res.status(200).json({
         success: true,
         message: "Backend is working!"
     });
 });
 
 // =================================
-// DEMO SUBMISSION
+// SECURITY AWARENESS DEMO
 // =================================
 
 app.post("/api/demo-submit", async (req, res) => {
@@ -68,48 +70,67 @@ app.post("/api/demo-submit", async (req, res) => {
             password
         } = req.body;
 
-        // Validation
-        if (!username || !password) {
+        // -----------------------------
+        // Validate input
+        // -----------------------------
+
+        if (
+            typeof username !== "string" ||
+            typeof password !== "string" ||
+            !username.trim() ||
+            !password
+        ) {
             return res.status(400).json({
                 success: false,
                 message: "Username and password are required."
             });
         }
 
-        // IMPORTANT:
-        // Do NOT store the actual password.
-        // Store only safe awareness-demo information.
+        // -----------------------------
+        // SECURITY:
+        // Never store the actual password.
+        // Only record its length for the
+        // security-awareness demonstration.
+        // -----------------------------
+
         const passwordLength = password.length;
+
+        // -----------------------------
+        // Insert into MySQL
+        // -----------------------------
 
         const [result] = await db.execute(
             `INSERT INTO demo_submissions
             (demo_username, password_length)
             VALUES (?, ?)`,
             [
-                username,
+                username.trim(),
                 passwordLength
             ]
         );
 
         console.log(
-            "Security-awareness demo submission received:",
-            username
+            "Demo submission received:",
+            username.trim()
         );
 
-        res.json({
+        // -----------------------------
+        // Response
+        // -----------------------------
+
+        return res.status(200).json({
             success: true,
             message: "Demo submission recorded.",
             id: result.insertId
         });
 
     } catch (error) {
-
         console.error(
             "Database error:",
             error.message
         );
 
-        res.status(500).json({
+        return res.status(500).json({
             success: false,
             message: "Database error."
         });
@@ -117,16 +138,24 @@ app.post("/api/demo-submit", async (req, res) => {
 });
 
 // =================================
+// 404 HANDLER
+// =================================
+
+app.use((req, res) => {
+    res.status(404).json({
+        success: false,
+        message: "Route not found."
+    });
+});
+
+// =================================
 // START SERVER
 // =================================
 
 async function startServer() {
-
     try {
-
-        // Test database connection
-        const connection =
-            await db.getConnection();
+        // Test MySQL connection first
+        const connection = await db.getConnection();
 
         console.log(
             "✅ MySQL connected successfully."
@@ -134,21 +163,19 @@ async function startServer() {
 
         connection.release();
 
-        // IMPORTANT FOR RAILWAY
+        // IMPORTANT for Railway:
+        // Listen on 0.0.0.0 and Railway's PORT.
         app.listen(
             PORT,
             "0.0.0.0",
             () => {
-
                 console.log(
                     `🚀 Server running on port ${PORT}`
                 );
-
             }
         );
 
     } catch (error) {
-
         console.error(
             "❌ MySQL connection failed:"
         );
@@ -157,6 +184,8 @@ async function startServer() {
             error.message
         );
 
+        // Stop the process if database
+        // connection cannot be established.
         process.exit(1);
     }
 }
