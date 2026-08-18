@@ -6,13 +6,11 @@ const path = require("path");
 
 const app = express();
 
-// Railway provides PORT automatically.
-// Local development will use 3000.
-const PORT = process.env.PORT || 3000;
+const PORT = Number(process.env.PORT) || 3000;
 
-// =================================
-// MIDDLEWARE
-// =================================
+// ================================
+// Middleware
+// ================================
 
 app.use(express.json());
 
@@ -22,9 +20,9 @@ app.use(
     })
 );
 
-// =================================
-// MYSQL CONNECTION
-// =================================
+// ================================
+// MySQL
+// ================================
 
 const db = mysql.createPool({
     host: process.env.MYSQLHOST,
@@ -38,9 +36,9 @@ const db = mysql.createPool({
     queueLimit: 0
 });
 
-// =================================
-// SERVE FRONTEND
-// =================================
+// ================================
+// Frontend
+// ================================
 
 app.use(
     express.static(
@@ -48,114 +46,85 @@ app.use(
     )
 );
 
-// =================================
-// TEST API
-// =================================
+// ================================
+// Test API
+// ================================
 
 app.get("/api/test", (req, res) => {
-    res.status(200).json({
+    res.json({
         success: true,
         message: "Backend is working!"
     });
 });
 
-// =================================
-// SECURITY AWARENESS DEMO
-// =================================
+// ================================
+// Security-awareness demo
+// ================================
 
 app.post("/api/demo-submit", async (req, res) => {
+
     try {
-        const {
-            username,
-            password
-        } = req.body;
 
-        // -----------------------------
-        // Validate input
-        // -----------------------------
+        const { username } = req.body;
 
-        if (
-            typeof username !== "string" ||
-            typeof password !== "string" ||
-            !username.trim() ||
-            !password
-        ) {
+        if (!username) {
             return res.status(400).json({
                 success: false,
-                message: "Username and password are required."
+                message: "Username is required."
             });
         }
 
-        // -----------------------------
-        // SECURITY:
-        // Never store the actual password.
-        // Only record its length for the
-        // security-awareness demonstration.
-        // -----------------------------
+        // IMPORTANT:
+        // Never store the password entered by the visitor.
+        // This is a fixed dummy value used only for the demo.
 
-        const passwordLength = password.length;
-
-        // -----------------------------
-        // Insert into MySQL
-        // -----------------------------
+        const DEMO_PASSWORD = "DEMO_ONLY_PASSWORD";
 
         const [result] = await db.execute(
             `INSERT INTO demo_submissions
-            (demo_username, password_length)
+            (demo_username, demo_password)
             VALUES (?, ?)`,
             [
-                username.trim(),
-                passwordLength
+                username,
+                DEMO_PASSWORD
             ]
         );
 
         console.log(
-            "Demo submission received:",
-            username.trim()
+            "Security demo submission:",
+            username
         );
 
-        // -----------------------------
-        // Response
-        // -----------------------------
-
-        return res.status(200).json({
+        res.json({
             success: true,
-            message: "Demo submission recorded.",
+            message: "Demo submission recorded safely.",
             id: result.insertId
         });
 
     } catch (error) {
+
         console.error(
             "Database error:",
             error.message
         );
 
-        return res.status(500).json({
+        res.status(500).json({
             success: false,
             message: "Database error."
         });
     }
 });
 
-// =================================
-// 404 HANDLER
-// =================================
-
-app.use((req, res) => {
-    res.status(404).json({
-        success: false,
-        message: "Route not found."
-    });
-});
-
-// =================================
-// START SERVER
-// =================================
+// ================================
+// Start server
+// ================================
 
 async function startServer() {
+
     try {
-        // Test MySQL connection first
-        const connection = await db.getConnection();
+
+        const connection =
+            await db.getConnection();
 
         console.log(
             "✅ MySQL connected successfully."
@@ -163,19 +132,20 @@ async function startServer() {
 
         connection.release();
 
-        // IMPORTANT for Railway:
-        // Listen on 0.0.0.0 and Railway's PORT.
         app.listen(
             PORT,
             "0.0.0.0",
             () => {
+
                 console.log(
                     `🚀 Server running on port ${PORT}`
                 );
+
             }
         );
 
     } catch (error) {
+
         console.error(
             "❌ MySQL connection failed:"
         );
@@ -184,8 +154,6 @@ async function startServer() {
             error.message
         );
 
-        // Stop the process if database
-        // connection cannot be established.
         process.exit(1);
     }
 }
