@@ -28,20 +28,21 @@ app.use(express.urlencoded({
 
 const db = mysql.createPool({
 
-    host: process.env.DB_HOST,
+    host: process.env.MYSQLHOST,
 
-    user: process.env.DB_USER,
+    port: Number(process.env.MYSQLPORT || 3306),
 
-    password: process.env.DB_PASSWORD,
+    user: process.env.MYSQLUSER,
 
-    database: process.env.DB_NAME,
+    password: process.env.MYSQLPASSWORD,
+
+    database: process.env.MYSQLDATABASE,
 
     waitForConnections: true,
 
     connectionLimit: 10,
 
     queueLimit: 0
-
 });
 
 
