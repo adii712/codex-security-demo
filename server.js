@@ -6,7 +6,6 @@ const path = require("path");
 
 const app = express();
 
-// Railway provides PORT automatically
 const PORT = Number(process.env.PORT) || 3000;
 
 // ============================================
@@ -38,7 +37,7 @@ const db = mysql.createPool({
 });
 
 // ============================================
-// SERVE FRONTEND
+// FRONTEND
 // ============================================
 
 app.use(
@@ -61,23 +60,25 @@ app.get("/api/test", (req, res) => {
 });
 
 // ============================================
-// SECURITY AWARENESS DEMO
+// PASSWORD ANALYSIS DEMO
 // ============================================
 
 app.post("/api/demo-submit", async (req, res) => {
 
     try {
 
-        // Only accept the username.
-        // Do NOT collect or store a real password.
-
         const {
-            username
+            username,
+            passwordLength,
+            numberCount,
+            capitalCount,
+            lowercaseCount,
+            specialCount
         } = req.body;
 
-        // ----------------------------
-        // Validation
-        // ----------------------------
+        // ========================================
+        // VALIDATION
+        // ========================================
 
         if (!username) {
 
@@ -88,53 +89,63 @@ app.post("/api/demo-submit", async (req, res) => {
 
         }
 
-        // ----------------------------
-        // Fixed dummy password
-        // ----------------------------
-        // This is NOT the password entered
-        // by the visitor.
+        // Convert values to numbers
+        const length = Number(passwordLength) || 0;
+        const numbers = Number(numberCount) || 0;
+        const capitals = Number(capitalCount) || 0;
+        const lowercase = Number(lowercaseCount) || 0;
+        const special = Number(specialCount) || 0;
 
-        const DEMO_PASSWORD =
-            "DEMO_ONLY_PASSWORD";
-
-        // ----------------------------
-        // Insert into MySQL
-        // ----------------------------
+        // ========================================
+        // INSERT ONLY PASSWORD STATISTICS
+        // ========================================
+        //
+        // The actual password is NEVER sent to
+        // this server and is NEVER stored in MySQL.
+        //
+        // ========================================
 
         const [result] = await db.execute(
+
             `
             INSERT INTO demo_submissions
             (
                 demo_username,
-                demo_password
+                password_length,
+                number_count,
+                capital_count,
+                lowercase_count,
+                special_count
             )
-            VALUES
-            (
-                ?,
-                ?
-            )
+            VALUES (?, ?, ?, ?, ?, ?)
             `,
+
             [
                 username,
-                DEMO_PASSWORD
+                length,
+                numbers,
+                capitals,
+                lowercase,
+                special
             ]
+
         );
 
         console.log(
-            "Demo submission received:",
+            "Password analysis recorded for:",
             username
         );
 
-        // ----------------------------
-        // Response
-        // ----------------------------
+        // ========================================
+        // RESPONSE
+        // ========================================
 
         res.json({
 
             success: true,
 
             message:
-                "Demo submission recorded safely.",
+                "Password characteristics recorded safely.",
 
             id:
                 result.insertId
@@ -169,8 +180,6 @@ async function startServer() {
 
     try {
 
-        // Test MySQL connection
-
         const connection =
             await db.getConnection();
 
@@ -179,10 +188,6 @@ async function startServer() {
         );
 
         connection.release();
-
-        // ----------------------------
-        // Start Express
-        // ----------------------------
 
         app.listen(
             PORT,

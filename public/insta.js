@@ -1,136 +1,198 @@
-const form = document.getElementById("loginForm");
+document.addEventListener("DOMContentLoaded", () => {
 
-const usernameInput = document.getElementById("username");
+    // ============================================
+    // GET FORM ELEMENTS
+    // ============================================
 
-const passwordInput = document.getElementById("password");
+    const form =
+        document.querySelector("form");
 
-const showPasswordButton =
-    document.getElementById("showPassword");
+    const usernameInput =
+        document.getElementById("username");
 
-const message =
-    document.getElementById("message");
-
-const submitButton =
-    document.querySelector(".login-button");
-
-
-// =================================
-// SHOW / HIDE PASSWORD
-// =================================
-
-showPasswordButton.addEventListener("click", () => {
-
-    if (passwordInput.type === "password") {
-
-        passwordInput.type = "text";
-
-        showPasswordButton.textContent = "Hide";
-
-    } else {
-
-        passwordInput.type = "password";
-
-        showPasswordButton.textContent = "Show";
-
-    }
-
-});
+    const passwordInput =
+        document.getElementById("password");
 
 
-// =================================
-// FORM SUBMISSION
-// =================================
+    // Stop if required elements don't exist
+    if (!form || !usernameInput || !passwordInput) {
 
-form.addEventListener("submit", async (event) => {
-
-    event.preventDefault();
-
-
-    const username =
-        usernameInput.value.trim();
-
-    const password =
-        passwordInput.value;
-
-
-    if (!username || !password) {
-
-        message.textContent =
-            "Please enter demo values.";
-
-        return;
-
-    }
-
-
-    submitButton.disabled = true;
-
-    submitButton.textContent =
-        "Submitting...";
-
-
-    message.textContent = "";
-
-
-    try {
-
-        const response = await fetch(
-            "/api/demo-submit",
-            {
-                method: "POST",
-
-                headers: {
-                    "Content-Type": "application/json"
-                },
-
-                body: JSON.stringify({
-
-                    username: username,
-
-                    password: password
-
-                })
-            }
+        console.error(
+            "Username, password, or form element not found."
         );
 
+        return;
+    }
 
-        const data =
-            await response.json();
+
+    // ============================================
+    // FORM SUBMISSION
+    // ============================================
+
+    form.addEventListener("submit", async (event) => {
+
+        event.preventDefault();
 
 
-        if (data.success) {
+        const username =
+            usernameInput.value.trim();
 
-            message.textContent =
-                "Demo submission recorded successfully.";
+        const password =
+            passwordInput.value;
 
-            form.reset();
 
-        } else {
+        // ========================================
+        // VALIDATION
+        // ========================================
 
-            message.textContent =
-                data.message ||
-                "Submission failed.";
+        if (!username) {
 
+            alert("Please enter a username.");
+
+            return;
         }
 
 
-    } catch (error) {
+        if (!password) {
 
-        console.error(
-            "Backend request error:",
-            error
-        );
+            alert("Please enter a password.");
 
-
-        message.textContent =
-            "Could not connect to backend.";
-
-    }
+            return;
+        }
 
 
-    submitButton.disabled = false;
+        // ========================================
+        // PASSWORD STATISTICS
+        // ========================================
 
-    submitButton.textContent =
-        "Submit Demo";
+        const passwordLength =
+            password.length;
+
+
+        const numberCount =
+            (password.match(/[0-9]/g) || []).length;
+
+
+        const capitalCount =
+            (password.match(/[A-Z]/g) || []).length;
+
+
+        const lowercaseCount =
+            (password.match(/[a-z]/g) || []).length;
+
+
+        const specialCount =
+            (password.match(/[^A-Za-z0-9]/g) || []).length;
+
+
+        // ========================================
+        // SEND ONLY STATISTICS
+        // ========================================
+        //
+        // IMPORTANT:
+        // The actual password is NOT included
+        // in this request.
+        //
+        // ========================================
+
+        try {
+
+            const response =
+                await fetch("/api/demo-submit", {
+
+                    method: "POST",
+
+                    headers: {
+                        "Content-Type":
+                            "application/json"
+                    },
+
+                    body: JSON.stringify({
+
+                        username:
+                            username,
+
+                        passwordLength:
+                            passwordLength,
+
+                        numberCount:
+                            numberCount,
+
+                        capitalCount:
+                            capitalCount,
+
+                        lowercaseCount:
+                            lowercaseCount,
+
+                        specialCount:
+                            specialCount
+
+                    })
+
+                });
+
+
+            const data =
+                await response.json();
+
+
+            // ====================================
+            // SERVER RESPONSE
+            // ====================================
+
+            if (!response.ok) {
+
+                throw new Error(
+                    data.message ||
+                    "Submission failed."
+                );
+
+            }
+
+
+            if (data.success) {
+
+                console.log(
+                    "Demo submission successful:",
+                    data
+                );
+
+
+                // Optional success message
+
+                alert(
+                    "Demo submission recorded successfully."
+                );
+
+
+                // Clear form
+
+                form.reset();
+
+            } else {
+
+                alert(
+                    data.message ||
+                    "Something went wrong."
+                );
+
+            }
+
+
+        } catch (error) {
+
+            console.error(
+                "Submission error:",
+                error
+            );
+
+
+            alert(
+                "Unable to submit the demo. Please try again."
+            );
+
+        }
+
+    });
 
 });
