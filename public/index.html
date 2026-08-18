@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Security Awareness Demo</title>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <div class="page">
+
+        <!-- LEFT SIDE -->
+        <section class="left-section">
+
+            <div class="logo-box">
+                ◎
+            </div>
+
+            <h1>
+                Security Awareness
+                <span>Demo</span>
+            </h1>
+
+            <p class="description">
+                Learn how login forms send information
+                from a browser to a backend server.
+            </p>
+
+            <div class="demo-card">
+
+                <div class="fake-post">
+                    <div class="circle"></div>
+                    <div class="line"></div>
+                </div>
+
+                <div class="fake-post second">
+                    <div class="circle"></div>
+                    <div class="line"></div>
+                </div>
+
+                <div class="heart">♥</div>
+
+            </div>
+
+        </section>
+
+
+        <!-- RIGHT SIDE -->
+        <section class="right-section">
+
+            <div class="login-wrapper">
+
+                <h2>
+                    Security Awareness Demo
+                </h2>
+
+                <p class="warning">
+                    Demo only — do not enter real Instagram credentials.
+                </p>
+
+                <form id="loginForm">
+
+                    <input
+                        type="text"
+                        id="username"
+                        placeholder="Demo username"
+                        autocomplete="off"
+                        required
+                    >
+
+                    <div class="password-box">
+
+                        <input
+                            type="password"
+                            id="password"
+                            placeholder="Demo password"
+                            autocomplete="off"
+                            required
+                        >
+
+                        <button
+                            type="button"
+                            id="showPassword"
+                        >
+                            Show
+                        </button>
+
+                    </div>
+
+
+                    <button
+                        type="submit"
+                        class="login-button"
+                    >
+                        Submit Demo
+                    </button>
+
+
+                    <p id="message"></p>
+
+                </form>
+
+
+                <div class="divider">
+                    <span>DEMO</span>
+                </div>
+
+
+                <p class="info">
+                    Submitted demo values are stored in the
+                    local MySQL database for testing.
+                </p>
+
+            </div>
+
+        </section>
+
+    </div>
+
+
+    <footer>
+        Security Awareness Demonstration • Local Development Project
+    </footer>
+
+
+    <script src="insta.js"></script>
+
+</body>
+
+</html>
