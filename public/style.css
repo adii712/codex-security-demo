@@ -1,519 +1,225 @@
 * {
+    box-sizing: border-box;
     margin: 0;
     padding: 0;
-    box-sizing: border-box;
 }
-
 
 body {
-    font-family: Arial, Helvetica, sans-serif;
-    background: #0f1014;
-    color: #f5f5f5;
-}
+    font-family:
+        Arial,
+        Helvetica,
+        sans-serif;
 
-
-.page {
-    min-height: calc(100vh - 55px);
-
-    display: flex;
-}
-
-
-/* =========================
-   LEFT SECTION
-========================= */
-
-.left-section {
-
-    width: 57%;
-
-    min-height: calc(100vh - 55px);
-
-    display: flex;
-    flex-direction: column;
-
-    align-items: center;
-
-    padding-top: 65px;
-
-    border-right: 1px solid #393b40;
-}
-
-
-.logo-box {
-
-    width: 75px;
-    height: 75px;
-
-    border-radius: 22px;
+    min-height: 100vh;
 
     display: flex;
     align-items: center;
     justify-content: center;
 
-    font-size: 55px;
-    font-weight: bold;
-
     background:
         linear-gradient(
             135deg,
-            #7b2cff,
-            #ff0080,
-            #ff9d00
+            #111827,
+            #1f2937
         );
 
-    color: white;
-
-    margin-bottom: 35px;
+    padding: 20px;
 }
 
-
-.left-section h1 {
-
-    font-size: 48px;
-
-    font-weight: 400;
-
-    text-align: center;
-
-    line-height: 1.2;
-
-    max-width: 700px;
+.container {
+    width: 100%;
+    max-width: 450px;
 }
 
+.card {
+    background: #ffffff;
 
-.left-section h1 span {
+    border-radius: 18px;
 
-    display: block;
+    padding: 35px;
 
-    margin-top: 8px;
-
-    background:
-        linear-gradient(
-            90deg,
-            #ff7b39,
-            #ff0080
-        );
-
-background-clip: text;
-color: transparent;}
-
-
-.description {
-
-    margin-top: 25px;
-
-    color: #aeb1b7;
-
-    font-size: 18px;
-
-    text-align: center;
-
-    max-width: 550px;
-
-    line-height: 1.6;
+    box-shadow:
+        0 20px 50px
+        rgba(0, 0, 0, 0.25);
 }
 
+.logo {
+    width: 65px;
+    height: 65px;
 
-/* =========================
-   DEMO GRAPHIC
-========================= */
+    display: flex;
+    align-items: center;
+    justify-content: center;
 
-.demo-card {
-
-    width: 300px;
-    height: 230px;
-
-    margin-top: 45px;
-
-    position: relative;
-}
-
-
-.fake-post {
-
-    position: absolute;
-
-    width: 170px;
-    height: 210px;
-
-    background: #25272d;
-
-    border: 1px solid #555860;
-
-    border-radius: 20px;
-
-    left: 20px;
-    top: 15px;
-
-    transform: rotate(-8deg);
-}
-
-
-.fake-post.second {
-
-    left: 105px;
-
-    top: 5px;
-
-    transform: rotate(8deg);
-
-    background: #303239;
-}
-
-
-.circle {
-
-    width: 45px;
-    height: 45px;
+    margin: 0 auto 20px;
 
     border-radius: 50%;
 
-    background:
-        linear-gradient(
-            135deg,
-            #ff8a00,
-            #ff0080,
-            #7b2cff
-        );
+    background: #111827;
 
-    margin: 20px auto;
+    font-size: 30px;
 }
 
+h1 {
+    text-align: center;
 
-.line {
+    color: #111827;
 
-    width: 100px;
-    height: 70px;
+    font-size: 26px;
 
-    border-radius: 10px;
-
-    background: #555860;
-
-    margin: 20px auto;
+    margin-bottom: 10px;
 }
 
+.subtitle {
+    text-align: center;
 
-.heart {
+    color: #6b7280;
 
-    position: absolute;
+    font-size: 14px;
 
-    bottom: 15px;
-    left: 125px;
+    line-height: 1.5;
 
-    font-size: 42px;
-
-    color: #ff2f72;
+    margin-bottom: 30px;
 }
 
-
-/* =========================
-   RIGHT SECTION
-========================= */
-
-.right-section {
-
-    width: 43%;
-
-    min-height: calc(100vh - 55px);
-
-    display: flex;
-
-    align-items: center;
-    justify-content: center;
-
-    background: #1d1d20;
+.form-group {
+    margin-bottom: 20px;
 }
 
+label {
+    display: block;
 
-.login-wrapper {
+    margin-bottom: 8px;
 
-    width: 460px;
+    font-size: 14px;
 
-    padding: 30px;
+    font-weight: 600;
+
+    color: #374151;
 }
-
-
-.login-wrapper h2 {
-
-    font-size: 24px;
-
-    margin-bottom: 15px;
-}
-
-
-.warning {
-
-    background: #392c0d;
-
-    border: 1px solid #80651c;
-
-    color: #ffd96a;
-
-    padding: 13px;
-
-    border-radius: 10px;
-
-    font-size: 13px;
-
-    line-height: 1.4;
-
-    margin-bottom: 25px;
-}
-
-
-/* =========================
-   INPUTS
-========================= */
 
 input {
-
     width: 100%;
 
-    height: 64px;
+    padding: 13px 14px;
 
-    background: #1d1d20;
+    border: 1px solid #d1d5db;
 
-    border: 1px solid #50535a;
-
-    border-radius: 17px;
-
-    padding: 0 18px;
-
-    color: white;
-
-    font-size: 16px;
+    border-radius: 9px;
 
     outline: none;
 
-    margin-bottom: 13px;
-}
+    font-size: 15px;
 
+    transition:
+        border-color 0.2s,
+        box-shadow 0.2s;
+}
 
 input:focus {
+    border-color: #111827;
 
-    border-color: #777b84;
+    box-shadow:
+        0 0 0 3px
+        rgba(17, 24, 39, 0.1);
 }
 
-
-input::placeholder {
-
-    color: #9ba8b8;
-}
-
-
-.password-box {
-
-    position: relative;
-}
-
-
-.password-box input {
-
-    padding-right: 75px;
-}
-
-
-#showPassword {
-
-    position: absolute;
-
-    right: 12px;
-    top: 16px;
-
-    background: transparent;
-
-    border: none;
-
-    color: #4da3ff;
-
-    font-weight: bold;
-
-    cursor: pointer;
-}
-
-
-/* =========================
-   BUTTON
-========================= */
-
-.login-button {
-
+button {
     width: 100%;
 
-    height: 50px;
-
     border: none;
 
-    border-radius: 25px;
+    border-radius: 9px;
 
-    background: #2167ad;
+    padding: 14px;
 
-    color: white;
+    background: #111827;
 
-    font-size: 16px;
+    color: #ffffff;
 
-    font-weight: bold;
+    font-size: 15px;
+
+    font-weight: 600;
 
     cursor: pointer;
 
-    margin-top: 5px;
-
-    transition: 0.2s;
+    transition:
+        background 0.2s,
+        transform 0.1s;
 }
 
-
-.login-button:hover {
-
-    background: #287bc9;
+button:hover {
+    background: #374151;
 }
 
+button:active {
+    transform: scale(0.99);
+}
 
-.login-button:disabled {
-
+button:disabled {
     opacity: 0.6;
 
     cursor: not-allowed;
 }
 
+.result {
+    margin-top: 20px;
 
-/* =========================
-   MESSAGE
-========================= */
+    padding: 14px;
 
-#message {
+    border-radius: 9px;
 
-    text-align: center;
+    background: #ecfdf5;
 
-    margin-top: 18px;
-
-    min-height: 20px;
-
-    color: #5ee58a;
+    color: #065f46;
 
     font-size: 14px;
+
+    line-height: 1.5;
 }
 
+.result.error {
+    background: #fef2f2;
 
-/* =========================
-   DIVIDER
-========================= */
-
-.divider {
-
-    display: flex;
-
-    align-items: center;
-
-    gap: 15px;
-
-    margin: 30px 0;
+    color: #991b1b;
 }
 
-
-.divider::before,
-.divider::after {
-
-    content: "";
-
-    height: 1px;
-
-    flex: 1;
-
-    background: #3c3d42;
+.hidden {
+    display: none;
 }
 
+.notice {
+    margin-top: 25px;
 
-.divider span {
+    padding: 14px;
 
-    color: #888b91;
+    border-radius: 9px;
+
+    background: #f3f4f6;
+
+    color: #4b5563;
 
     font-size: 12px;
-}
-
-
-/* =========================
-   INFO
-========================= */
-
-.info {
-
-    text-align: center;
-
-    color: #8f9299;
-
-    font-size: 13px;
 
     line-height: 1.6;
 }
 
+.notice strong {
+    display: block;
 
-/* =========================
-   FOOTER
-========================= */
+    margin-bottom: 5px;
 
-footer {
-
-    height: 55px;
-
-    display: flex;
-
-    justify-content: center;
-
-    align-items: center;
-
-    border-top: 1px solid #303136;
-
-    background: #0f1014;
-
-    color: #777b83;
-
-    font-size: 12px;
+    color: #111827;
 }
 
+@media (max-width: 480px) {
 
-/* =========================
-   MOBILE
-========================= */
-
-@media (max-width: 900px) {
-
-    .page {
-        flex-direction: column;
+    .card {
+        padding: 25px 20px;
     }
 
-
-    .left-section {
-
-        width: 100%;
-
-        min-height: 450px;
-
-        border-right: none;
-
-        border-bottom: 1px solid #393b40;
-    }
-
-
-    .left-section h1 {
-
-        font-size: 36px;
-    }
-
-
-    .right-section {
-
-        width: 100%;
-
-        padding: 30px 15px;
-    }
-
-
-    .login-wrapper {
-
-        width: 100%;
-
-        max-width: 460px;
+    h1 {
+        font-size: 22px;
     }
 
 }

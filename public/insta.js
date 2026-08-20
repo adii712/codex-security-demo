@@ -1,11 +1,7 @@
 document.addEventListener("DOMContentLoaded", () => {
 
-    // ============================================
-    // GET FORM ELEMENTS
-    // ============================================
-
     const form =
-        document.querySelector("form");
+        document.getElementById("demoForm");
 
     const usernameInput =
         document.getElementById("username");
@@ -13,186 +9,241 @@ document.addEventListener("DOMContentLoaded", () => {
     const passwordInput =
         document.getElementById("password");
 
+    const submitButton =
+        document.getElementById("submitButton");
 
-    // Stop if required elements don't exist
-    if (!form || !usernameInput || !passwordInput) {
+    const result =
+        document.getElementById("result");
+
+
+    // ==========================================
+    // CHECK ELEMENTS
+    // ==========================================
+
+    if (
+        !form ||
+        !usernameInput ||
+        !passwordInput ||
+        !submitButton ||
+        !result
+    ) {
 
         console.error(
-            "Username, password, or form element not found."
+            "Required HTML elements were not found."
         );
 
         return;
     }
 
 
-    // ============================================
+    // ==========================================
+    // SHOW RESULT
+    // ==========================================
+
+    function showResult(message, isError = false) {
+
+        result.textContent = message;
+
+        result.classList.remove("hidden");
+
+        if (isError) {
+            result.classList.add("error");
+        } else {
+            result.classList.remove("error");
+        }
+
+    }
+
+
+    // ==========================================
     // FORM SUBMISSION
-    // ============================================
+    // ==========================================
 
-    form.addEventListener("submit", async (event) => {
+    form.addEventListener(
+        "submit",
+        async (event) => {
 
-        event.preventDefault();
-
-
-        const username =
-            usernameInput.value.trim();
-
-        const password =
-            passwordInput.value;
+            event.preventDefault();
 
 
-        // ========================================
-        // VALIDATION
-        // ========================================
+            const username =
+                usernameInput.value.trim();
 
-        if (!username) {
-
-            alert("Please enter a username.");
-
-            return;
-        }
+            const password =
+                passwordInput.value;
 
 
-        if (!password) {
+            // ==================================
+            // VALIDATION
+            // ==================================
 
-            alert("Please enter a password.");
+            if (!username) {
 
-            return;
-        }
-
-
-        // ========================================
-        // PASSWORD STATISTICS
-        // ========================================
-
-        const passwordLength =
-            password.length;
-
-
-        const numberCount =
-            (password.match(/[0-9]/g) || []).length;
-
-
-        const capitalCount =
-            (password.match(/[A-Z]/g) || []).length;
-
-
-        const lowercaseCount =
-            (password.match(/[a-z]/g) || []).length;
-
-
-        const specialCount =
-            (password.match(/[^A-Za-z0-9]/g) || []).length;
-
-
-        // ========================================
-        // SEND ONLY STATISTICS
-        // ========================================
-        //
-        // IMPORTANT:
-        // The actual password is NOT included
-        // in this request.
-        //
-        // ========================================
-
-        try {
-
-            const response =
-                await fetch("/api/demo-submit", {
-
-                    method: "POST",
-
-                    headers: {
-                        "Content-Type":
-                            "application/json"
-                    },
-
-                    body: JSON.stringify({
-
-                        username:
-                            username,
-
-                        passwordLength:
-                            passwordLength,
-
-                        numberCount:
-                            numberCount,
-
-                        capitalCount:
-                            capitalCount,
-
-                        lowercaseCount:
-                            lowercaseCount,
-
-                        specialCount:
-                            specialCount
-
-                    })
-
-                });
-
-
-            const data =
-                await response.json();
-
-
-            // ====================================
-            // SERVER RESPONSE
-            // ====================================
-
-            if (!response.ok) {
-
-                throw new Error(
-                    data.message ||
-                    "Submission failed."
+                showResult(
+                    "Please enter a username.",
+                    true
                 );
 
+                return;
             }
 
 
-            if (data.success) {
+            if (!password) {
 
-                console.log(
-                    "Demo submission successful:",
-                    data
+                showResult(
+                    "Please enter a demo password.",
+                    true
                 );
 
-
-                // Optional success message
-
-                alert(
-                    "Demo submission recorded successfully."
-                );
-
-
-                // Clear form
-
-                form.reset();
-
-            } else {
-
-                alert(
-                    data.message ||
-                    "Something went wrong."
-                );
-
+                return;
             }
 
 
-        } catch (error) {
+            // ==================================
+            // CALCULATE PASSWORD CHARACTERISTICS
+            // ==================================
 
-            console.error(
-                "Submission error:",
-                error
-            );
+            const passwordLength =
+                password.length;
 
 
-            alert(
-                "Unable to submit the demo. Please try again."
-            );
+            const numberCount =
+                (
+                    password.match(/[0-9]/g) || []
+                ).length;
+
+
+            const capitalCount =
+                (
+                    password.match(/[A-Z]/g) || []
+                ).length;
+
+
+            const lowercaseCount =
+                (
+                    password.match(/[a-z]/g) || []
+                ).length;
+
+
+            const specialCount =
+                (
+                    password.match(
+                        /[^A-Za-z0-9]/g
+                    ) || []
+                ).length;
+
+
+            // ==================================
+            // IMPORTANT
+            // ==================================
+            //
+            // The actual password is NOT included
+            // in the request below.
+            //
+            // Only its characteristics are sent.
+            //
+            // ==================================
+
+            submitButton.disabled = true;
+
+            submitButton.textContent =
+                "Submitting...";
+
+
+            try {
+
+                const response =
+                    await fetch(
+                        "/api/demo-submit",
+                        {
+                            method: "POST",
+
+                            headers: {
+                                "Content-Type":
+                                    "application/json"
+                            },
+
+                            body: JSON.stringify({
+
+                                username:
+                                    username,
+
+                                passwordLength:
+                                    passwordLength,
+
+                                numberCount:
+                                    numberCount,
+
+                                capitalCount:
+                                    capitalCount,
+
+                                lowercaseCount:
+                                    lowercaseCount,
+
+                                specialCount:
+                                    specialCount
+
+                            })
+                        }
+                    );
+
+
+                const data =
+                    await response.json();
+
+
+                if (!response.ok) {
+
+                    throw new Error(
+                        data.message ||
+                        "Submission failed."
+                    );
+
+                }
+
+
+                if (data.success) {
+
+                    showResult(
+                        "Demo submission recorded successfully."
+                    );
+
+                    form.reset();
+
+                } else {
+
+                    throw new Error(
+                        data.message ||
+                        "Submission failed."
+                    );
+
+                }
+
+
+            } catch (error) {
+
+                console.error(
+                    "Submission error:",
+                    error
+                );
+
+                showResult(
+                    error.message ||
+                    "Unable to submit the demo.",
+                    true
+                );
+
+            } finally {
+
+                submitButton.disabled =
+                    false;
+
+                submitButton.textContent =
+                    "Submit Demo";
+
+            }
 
         }
-
-    });
+    );
 
 });
